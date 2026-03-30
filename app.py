@@ -15,7 +15,7 @@ from PIL import Image, ImageOps, ImageFilter
 
 app = Flask(__name__)
 model = None
-MODEL_FILES = ["digit_model_v2.keras", "digit_model.keras"]
+MODEL_FILES = ["model/digit_model_v2.keras", "model/digit_model.keras"]
 
 # ── Model loading ──────────────────────────────────────────
 def load_model():
