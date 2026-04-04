@@ -1,0 +1,327 @@
+{% extends "base.html" %}
+
+{# ── Tab title ───────────────────────────────────────── #}
+{% block title %}Synapse | {% if mode == 'login' %}Login{% else %}Create Account{% endif %}{% endblock %}
+
+{# ── Preloader messages ───────────────────────────────── #}
+{% block preloader_msgs_script %}
+<script>window.__PRELOADER_MSGS__ = [
+  '> initializing synapse...',
+  '> establishing secure session...',
+  '> ready. please authenticate.'
+];</script>
+{% endblock %}
+
+{# ── Shorter preloader sub-line ───────────────────────── #}
+{% block preloader_sub %}SECURE AUTH · v2{% endblock %}
+
+{# ── No topbar on auth pages ──────────────────────────── #}
+{% block topbar %}{% endblock %}
+
+{# ── No footer on auth pages ──────────────────────────── #}
+{% block footer %}{% endblock %}
+
+{# ── Body class lets CSS set flex centering ───────────── #}
+{% block body_class %}auth-page{% endblock %}
+
+{# ── App shell override: full height flex for centering ── #}
+{% block app_extra_class %}app-auth{% endblock %}
+
+
+{# ── Extra styles scoped to auth ──────────────────────── #}
+{% block extra_css %}
+<style>
+  /* Auth-specific overrides — base variables stay intact */
+  body.auth-page { overflow: auto; }
+
+  .app-auth {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    /* Override the default grid from .app */
+    grid-template-rows: unset !important;
+  }
+
+  /* Force main-content to be a plain flow block here */
+  .app-auth .main-content {
+    display: contents;
+  }
+
+  /* ── Auth card container ── */
+  .auth-wrap {
+    width: 100%;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* ── Logo block ── */
+  .auth-logo {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+  }
+  .auth-logo-text { display: flex; flex-direction: column; gap: .1rem; }
+  .auth-logo-name {
+    font-family: var(--mono);
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: .2em;
+    color: var(--g);
+    text-shadow: 0 0 14px var(--g);
+  }
+  .auth-logo-sub {
+    font-size: .62rem;
+    letter-spacing: .14em;
+    color: var(--t2);
+  }
+
+  /* ── Card ── */
+  .auth-card {
+    background: var(--bg2);
+    border: 1px solid var(--b1);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  /* Corner accents matching the canvas frame style */
+  .auth-card::before,
+  .auth-card::after {
+    content: '';
+    position: absolute;
+    width: 14px; height: 14px;
+    border-color: var(--g);
+    border-style: solid;
+  }
+  .auth-card::before { top: 0; left: 0;  border-width: 2px 0 0 2px; }
+  .auth-card::after  { top: 0; right: 0; border-width: 2px 2px 0 0; }
+  .auth-card-bl,
+  .auth-card-br {
+    position: absolute;
+    width: 14px; height: 14px;
+    border-color: var(--g);
+    border-style: solid;
+  }
+  .auth-card-bl { bottom: 0; left: 0;  border-width: 0 0 2px 2px; }
+  .auth-card-br { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
+
+  /* ── Tab switcher (Login / Sign Up) ── */
+  .auth-tabs {
+    display: flex;
+    border: 1px solid var(--b1);
+    margin-bottom: 1.8rem;
+    background: var(--bg3);
+  }
+  .auth-tab {
+    flex: 1;
+    padding: .55rem;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: .75rem;
+    letter-spacing: .1em;
+    color: var(--t2);
+    text-decoration: none;
+    transition: all .18s;
+    border: none;
+    background: transparent;
+  }
+  .auth-tab.active {
+    background: var(--g);
+    color: #000;
+    font-weight: 600;
+    box-shadow: 0 0 18px var(--ga);
+  }
+  .auth-tab:not(.active):hover { color: var(--text); }
+
+  /* ── Flash messages ── */
+  .flash-list { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1.4rem; }
+  .flash-msg {
+    padding: .6rem .9rem;
+    font-size: .78rem;
+    letter-spacing: .02em;
+    border: 1px solid;
+  }
+  .flash-msg.error   { background: rgba(255,80,80,.07);  border-color: rgba(255,80,80,.3);  color: #ff6b6b; }
+  .flash-msg.info    { background: rgba(0,255,136,.06);  border-color: var(--b1);            color: var(--g); }
+  .flash-msg.success { background: rgba(0,255,136,.06);  border-color: var(--b2);            color: var(--g); }
+
+  /* ── Form fields ── */
+  .auth-field { margin-bottom: 1.1rem; }
+  .auth-field:last-of-type { margin-bottom: 0; }
+
+  .auth-label {
+    display: block;
+    font-size: .65rem;
+    letter-spacing: .14em;
+    color: var(--t2);
+    margin-bottom: .45rem;
+  }
+
+  .auth-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--b1);
+    padding: .65rem .9rem;
+    font-family: var(--mono);
+    font-size: .85rem;
+    color: var(--text);
+    outline: none;
+    transition: border-color .18s, box-shadow .18s;
+    -webkit-appearance: none;
+    box-sizing: border-box;
+  }
+  .auth-input::placeholder { color: var(--t3); }
+  .auth-input:focus {
+    border-color: var(--g);
+    box-shadow: 0 0 0 1px var(--ga);
+  }
+
+  /* ── Submit button ── */
+  .auth-submit {
+    width: 100%;
+    margin-top: 1.4rem;
+    padding: .75rem;
+    background: var(--g);
+    color: #000;
+    border: none;
+    font-family: var(--mono);
+    font-size: .88rem;
+    font-weight: 600;
+    letter-spacing: .1em;
+    cursor: pointer;
+    transition: opacity .18s, box-shadow .18s;
+  }
+  .auth-submit:hover {
+    opacity: .88;
+    box-shadow: 0 0 28px rgba(0,255,136,.35);
+  }
+
+  /* ── Switch line ── */
+  .auth-switch {
+    text-align: center;
+    margin-top: 1.2rem;
+    font-size: .75rem;
+    color: var(--t2);
+  }
+  .auth-switch a {
+    color: var(--g);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .auth-switch a:hover { text-decoration: underline; }
+
+  /* ── Scan line effect on card ── */
+  @keyframes scanLine {
+    0%   { top: -4px; }
+    100% { top: calc(100% + 4px); }
+  }
+  .auth-card-scan {
+    position: absolute;
+    left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--g3), transparent);
+    pointer-events: none;
+    animation: scanLine 3.5s linear infinite;
+    opacity: .5;
+  }
+</style>
+{% endblock extra_css %}
+
+
+{# ── Content ──────────────────────────────────────────── #}
+{% block content %}
+<div class="auth-wrap">
+
+  {# Logo #}
+  <div class="auth-logo">
+    <svg width="28" height="28" viewBox="0 0 24 24">
+      <polygon points="12,1 21,6 21,18 12,23 3,18 3,6"
+               fill="none" stroke="var(--g)" stroke-width="1.5"
+               style="filter:drop-shadow(0 0 5px var(--g))"/>
+    </svg>
+    <div class="auth-logo-text">
+      <div class="auth-logo-name">SYNAPSE</div>
+      <div class="auth-logo-sub">CNN · DIGIT RECOGNITION · v2</div>
+    </div>
+  </div>
+
+  {# Card #}
+  <div class="auth-card">
+    <div class="auth-card-scan"></div>
+    <span class="auth-card-bl"></span>
+    <span class="auth-card-br"></span>
+
+    {# Login / Sign-up tabs #}
+    <div class="auth-tabs">
+      <a href="{{ url_for('auth.login_page') }}"
+         class="auth-tab {% if mode == 'login' %}active{% endif %}">Login</a>
+      <a href="{{ url_for('auth.signup_page') }}"
+         class="auth-tab {% if mode == 'signup' %}active{% endif %}">Sign Up</a>
+    </div>
+
+    {# Flash messages #}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <div class="flash-list">
+        {% for category, message in messages %}
+        <div class="flash-msg {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% endwith %}
+
+    {# ── LOGIN FORM ── #}
+    {% if mode == 'login' %}
+    <form method="POST" action="{{ url_for('auth.login_page') }}" autocomplete="on">
+      <div class="auth-field">
+        <label class="auth-label" for="email">EMAIL</label>
+        <input class="auth-input" type="email" id="email" name="email"
+               placeholder="you@example.com" required autocomplete="email"/>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label" for="password">PASSWORD</label>
+        <input class="auth-input" type="password" id="password" name="password"
+               placeholder="••••••••" required autocomplete="current-password"/>
+      </div>
+      <button class="auth-submit" type="submit">Login →</button>
+    </form>
+    <div class="auth-switch">
+      No account? <a href="{{ url_for('auth.signup_page') }}">Sign up</a>
+    </div>
+
+    {# ── SIGN-UP FORM ── #}
+    {% else %}
+    <form method="POST" action="{{ url_for('auth.signup_page') }}" autocomplete="on">
+      <div class="auth-field">
+        <label class="auth-label" for="username">USERNAME</label>
+        <input class="auth-input" type="text" id="username" name="username"
+               placeholder="yourname" required minlength="3" autocomplete="username"/>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label" for="email">EMAIL</label>
+        <input class="auth-input" type="email" id="email" name="email"
+               placeholder="you@example.com" required autocomplete="email"/>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label" for="password">PASSWORD</label>
+        <input class="auth-input" type="password" id="password" name="password"
+               placeholder="Min 6 characters" required minlength="6" autocomplete="new-password"/>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label" for="confirm">CONFIRM PASSWORD</label>
+        <input class="auth-input" type="password" id="confirm" name="confirm"
+               placeholder="Repeat password" required autocomplete="new-password"/>
+      </div>
+      <button class="auth-submit" type="submit">Create Account →</button>
+    </form>
+    <div class="auth-switch">
+      Already have an account? <a href="{{ url_for('auth.login_page') }}">Login</a>
+    </div>
+    {% endif %}
+
+  </div>{# /auth-card #}
+</div>{# /auth-wrap #}
+{% endblock content %}

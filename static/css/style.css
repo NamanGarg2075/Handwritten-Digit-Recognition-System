@@ -521,3 +521,55 @@ input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.25); }
 }
 
 .hidden { display: none !important; }
+
+/* ══════════════════════════════════════════════════════
+   SHARED NAV ELEMENTS  (used across all pages)
+══════════════════════════════════════════════════════ */
+
+/* Generic nav link wrapper — strips anchor styling */
+.tb-nav-link { text-decoration: none; }
+
+/* Clickable chip variant */
+.tb-chip-nav {
+  cursor: pointer;
+  transition: border-color .18s, color .18s;
+}
+.tb-chip-nav:hover { border-color: var(--b2); color: var(--g); }
+
+/* Logged-in user chip */
+.tb-chip-user {
+  color: var(--g3);
+  border-color: var(--b2);
+  gap: .4rem;
+}
+
+/* Logout button — uses .tb-live base but red accents */
+.tb-logout {
+  cursor: pointer;
+  border: 1px solid rgba(255,80,80,.25);
+  padding: .22rem .55rem;
+  color: #ff6b6b !important;
+  text-shadow: none !important;
+  transition: border-color .18s;
+}
+.tb-logout:hover { border-color: rgba(255,80,80,.5); }
+
+/* Red pip for logout */
+.tb-pip-red {
+  background: #ff6b6b !important;
+  box-shadow: 0 0 8px #ff6b6b !important;
+  animation: pip 1.8s ease infinite;
+}
+
+/* ── .app override for pages that need scroll ── */
+/* Applied via body class; auth and dashboard use this */
+body.auth-page .app,
+body.dash-page .app {
+  height: auto;
+  min-height: 100vh;
+  overflow: visible;
+}
+body.auth-page,
+body.dash-page {
+  overflow: auto;
+}
