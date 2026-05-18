@@ -6,11 +6,11 @@
 {# ── Preloader messages ───────────────────────────────── #}
 {% block preloader_msgs_script %}
 <script>window.__PRELOADER_MSGS__ = [
-  '> initializing synapse...',
-  '> fetching prediction history...',
-  '> rendering dashboard...',
-  '> ready.'
-];</script>
+    '> initializing synapse...',
+    '> fetching prediction history...',
+    '> rendering dashboard...',
+    '> ready.'
+  ];</script>
 {% endblock %}
 
 {% block preloader_sub %}DASHBOARD · v2{% endblock %}
@@ -19,33 +19,31 @@
 {% block topbar_desc %}Prediction History · {{ current_user.username }}{% endblock %}
 
 {% block topbar_right %}
-  <a href="{{ url_for('tool') }}" class="tb-nav-link">
-    <span class="tb-chip tb-chip-nav">
-      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-        <path d="M1 10L3 8 8 3 9.5 4.5 4.5 9.5 2.5 10H1Z"
-              stroke="currentColor" stroke-width="1.1" stroke-linejoin="round"/>
-      </svg>
-      Recognizer
-    </span>
-  </a>
-  <span class="tb-chip tb-chip-user">
-    <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
-      <circle cx="4.5" cy="3" r="2" stroke="currentColor" stroke-width="1.1"/>
-      <path d="M1 8.5C1 6.567 2.567 5 4.5 5s3.5 1.567 3.5 3.5"
-            stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/>
+<a href="{{ url_for('tool') }}" class="tb-nav-link">
+  <span class="tb-chip tb-chip-nav">
+    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+      <path d="M1 10L3 8 8 3 9.5 4.5 4.5 9.5 2.5 10H1Z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" />
     </svg>
-    {{ current_user.username }}
+    Recognizer
   </span>
-  <a href="{{ url_for('auth.logout') }}" class="tb-nav-link">
-    <span class="tb-live tb-logout">
-      <span class="tb-pip tb-pip-red"></span>Logout
-    </span>
-  </a>
+</a>
+<span class="tb-chip tb-chip-user">
+  <svg width="9" height="9" viewBox="0 0 9 9" fill="none">
+    <circle cx="4.5" cy="3" r="2" stroke="currentColor" stroke-width="1.1" />
+    <path d="M1 8.5C1 6.567 2.567 5 4.5 5s3.5 1.567 3.5 3.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" />
+  </svg>
+  {{ current_user.username }}
+</span>
+<a href="{{ url_for('auth.logout') }}" class="tb-nav-link">
+  <span class="tb-live tb-logout">
+    <span class="tb-pip tb-pip-red"></span>Logout
+  </span>
+</a>
 {% endblock topbar_right %}
 
 {# ── Footer overrides ─────────────────────────────────── #}
 {% block footer_left %}
-  {{ predictions|length }} predictions · canvas snapshots auto-saved · deletable anytime
+{{ predictions|length }} predictions · canvas snapshots auto-saved · deletable anytime
 {% endblock %}
 {% block footer_right %}SQLAlchemy · MySQL · Flask{% endblock %}
 
@@ -54,29 +52,49 @@
 {% block extra_css %}
 <style>
   /* Dashboard needs scrollable body */
-  html, body { overflow: auto !important; }
-  .app { height: auto !important; min-height: 100vh; grid-template-rows: 48px 1fr 36px !important; overflow: visible !important; }
+  html,
+  body {
+    overflow: auto !important;
+  }
+
+  .app {
+    height: auto !important;
+    min-height: 100vh;
+    grid-template-rows: 48px auto 36px !important;
+    overflow: visible !important;
+    display: block !important;
+    /* ← kills the grid entirely */
+    padding-top: 48px;
+    /* ← compensate for topbar */
+    padding-bottom: 36px;
+    /* ← compensate for footer */
+  }
 
   /* ── Stats row ── */
   .dash-stats {
     display: flex;
     gap: .75rem;
-    padding: 1.25rem 1.5rem .25rem;
+    padding: 1.25rem 1.5rem .75rem;
     flex-wrap: wrap;
+    align-items: stretch;
   }
+
   .stat-card {
     flex: 1;
     min-width: 120px;
     background: var(--bg2);
     border: 1px solid var(--b1);
-    padding: .9rem 1.1rem;
+    padding: .75rem 1.1rem;
     position: relative;
     overflow: hidden;
   }
+
   .stat-card::after {
     content: '';
     position: absolute;
-    bottom: 0; left: 0; right: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     height: 2px;
     background: var(--g);
     transform: scaleX(0);
@@ -84,16 +102,21 @@
     transition: transform .4s ease;
     box-shadow: 0 0 8px var(--g);
   }
-  .stat-card:hover::after { transform: scaleX(1); }
+
+  .stat-card:hover::after {
+    transform: scaleX(1);
+  }
+
   .stat-n {
     font-family: var(--mono);
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 600;
     color: var(--g);
     text-shadow: 0 0 20px var(--g);
     line-height: 1;
-    margin-bottom: .3rem;
+    margin-bottom: .25rem;
   }
+
   .stat-l {
     font-size: .6rem;
     letter-spacing: .14em;
@@ -104,6 +127,7 @@
   .dash-section {
     padding: 1rem 1.5rem 2rem;
   }
+
   .dash-section-title {
     font-size: .65rem;
     letter-spacing: .16em;
@@ -115,6 +139,7 @@
     padding-bottom: .6rem;
     border-bottom: 1px solid var(--b1);
   }
+
   .dash-section-title span {
     font-family: var(--mono);
     color: var(--t3);
@@ -126,10 +151,30 @@
     grid-template-columns: repeat(5, 1fr);
     gap: .85rem;
   }
-  @media (max-width: 1400px) { .dash-grid { grid-template-columns: repeat(4, 1fr); } }
-  @media (max-width: 1100px) { .dash-grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width:  720px) { .dash-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width:  420px) { .dash-grid { grid-template-columns: 1fr; } }
+
+  @media (max-width: 1400px) {
+    .dash-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (max-width: 1100px) {
+    .dash-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 720px) {
+    .dash-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 420px) {
+    .dash-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 
   /* ── Prediction card ── */
   .pred-card {
@@ -140,17 +185,20 @@
     transition: border-color .18s, transform .18s, box-shadow .18s;
     cursor: default;
   }
+
   .pred-card:hover {
     border-color: var(--b2);
     transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(0,0,0,.4), 0 0 0 1px var(--b1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .4), 0 0 0 1px var(--b1);
   }
 
   /* Top accent line — hidden until hover */
   .pred-card::before {
     content: '';
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 2px;
     background: var(--g);
     box-shadow: 0 0 8px var(--g);
@@ -158,7 +206,10 @@
     transform-origin: left;
     transition: transform .25s ease;
   }
-  .pred-card:hover::before { transform: scaleX(1); }
+
+  .pred-card:hover::before {
+    transform: scaleX(1);
+  }
 
   /* Canvas snapshot */
   .pred-thumb {
@@ -171,6 +222,7 @@
     overflow: hidden;
     border-bottom: 1px solid var(--b1);
   }
+
   .pred-thumb img {
     width: 100%;
     height: 100%;
@@ -178,6 +230,7 @@
     image-rendering: pixelated;
     display: block;
   }
+
   .pred-thumb-none {
     font-family: var(--mono);
     font-size: 3.5rem;
@@ -188,8 +241,17 @@
   }
 
   /* Info section */
-  .pred-info { padding: .7rem .8rem .8rem; }
-  .pred-row  { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: .3rem; }
+  .pred-info {
+    padding: .7rem .8rem .8rem;
+  }
+
+  .pred-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: .3rem;
+  }
+
   .pred-digit {
     font-family: var(--mono);
     font-size: 2.2rem;
@@ -198,6 +260,7 @@
     text-shadow: 0 0 16px var(--g);
     line-height: 1;
   }
+
   .pred-src {
     font-size: .56rem;
     letter-spacing: .1em;
@@ -206,8 +269,17 @@
     padding: .1rem .35rem;
     text-transform: uppercase;
   }
-  .pred-conf { font-size: .72rem; color: var(--t2); margin-bottom: .2rem; }
-  .pred-conf strong { color: var(--text); font-weight: 600; }
+
+  .pred-conf {
+    font-size: .72rem;
+    color: var(--t2);
+    margin-bottom: .2rem;
+  }
+
+  .pred-conf strong {
+    color: var(--text);
+    font-weight: 600;
+  }
 
   /* Mini confidence bar */
   .pred-mini-bar {
@@ -217,6 +289,7 @@
     margin-bottom: .45rem;
     overflow: hidden;
   }
+
   .pred-mini-fill {
     height: 100%;
     background: var(--g);
@@ -224,16 +297,23 @@
     transition: width .5s ease;
   }
 
-  .pred-date { font-size: .6rem; color: var(--t3); }
+  .pred-date {
+    font-size: .6rem;
+    color: var(--t3);
+  }
 
   /* Delete button */
   .pred-del {
     position: absolute;
-    top: .5rem; right: .5rem;
-    width: 24px; height: 24px;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(255,60,60,.1);
-    border: 1px solid rgba(255,60,60,.2);
+    top: .5rem;
+    right: .5rem;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 60, 60, .1);
+    border: 1px solid rgba(255, 60, 60, .2);
     color: #ff6060;
     font-size: .75rem;
     cursor: pointer;
@@ -242,8 +322,14 @@
     z-index: 2;
     line-height: 1;
   }
-  .pred-card:hover .pred-del { opacity: 1; }
-  .pred-del:hover { background: rgba(255,60,60,.25); }
+
+  .pred-card:hover .pred-del {
+    opacity: 1;
+  }
+
+  .pred-del:hover {
+    background: rgba(255, 60, 60, .25);
+  }
 
   /* ── Empty state ── */
   .dash-empty {
@@ -251,6 +337,7 @@
     padding: 6rem 1rem;
     color: var(--t2);
   }
+
   .dash-empty-glyph {
     font-family: var(--mono);
     font-size: 5rem;
@@ -260,14 +347,27 @@
     line-height: 1;
     margin-bottom: 1.5rem;
   }
-  .dash-empty p { font-size: .85rem; margin-bottom: .6rem; }
-  .dash-empty a { color: var(--g); text-decoration: none; font-weight: 500; }
-  .dash-empty a:hover { text-decoration: underline; }
+
+  .dash-empty p {
+    font-size: .85rem;
+    margin-bottom: .6rem;
+  }
+
+  .dash-empty a {
+    color: var(--g);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .dash-empty a:hover {
+    text-decoration: underline;
+  }
 
   /* ── Toast ── */
   .toast {
     position: fixed;
-    bottom: 1.5rem; right: 1.5rem;
+    bottom: 1.5rem;
+    right: 1.5rem;
     background: var(--bg3);
     border: 1px solid var(--b1);
     padding: .65rem 1.1rem;
@@ -283,24 +383,58 @@
     align-items: center;
     gap: .6rem;
   }
+
   .toast::before {
     content: '';
-    width: 6px; height: 6px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: var(--g);
     box-shadow: 0 0 8px var(--g);
     flex-shrink: 0;
   }
-  .toast.show { opacity: 1; transform: translateY(0); }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
   /* ── Nav link styling shared with index ── */
-  .tb-nav-link { text-decoration: none; }
-  .tb-chip-nav { cursor: pointer; transition: border-color .18s, color .18s; }
-  .tb-chip-nav:hover { border-color: var(--b2); color: var(--g); }
-  .tb-chip-user { color: var(--g3); border-color: var(--b2); }
-  .tb-logout { cursor: pointer; border: 1px solid rgba(255,80,80,.25); padding: .22rem .55rem; color: #ff6b6b !important; text-shadow: none !important; }
-  .tb-logout:hover { border-color: rgba(255,80,80,.5); }
-  .tb-pip-red { background: #ff6b6b !important; box-shadow: 0 0 8px #ff6b6b !important; }
+  .tb-nav-link {
+    text-decoration: none;
+  }
+
+  .tb-chip-nav {
+    cursor: pointer;
+    transition: border-color .18s, color .18s;
+  }
+
+  .tb-chip-nav:hover {
+    border-color: var(--b2);
+    color: var(--g);
+  }
+
+  .tb-chip-user {
+    color: var(--g3);
+    border-color: var(--b2);
+  }
+
+  .tb-logout {
+    cursor: pointer;
+    border: 1px solid rgba(255, 80, 80, .25);
+    padding: .22rem .55rem;
+    color: #ff6b6b !important;
+    text-shadow: none !important;
+  }
+
+  .tb-logout:hover {
+    border-color: rgba(255, 80, 80, .5);
+  }
+
+  .tb-pip-red {
+    background: #ff6b6b !important;
+    box-shadow: 0 0 8px #ff6b6b !important;
+  }
 </style>
 {% endblock extra_css %}
 
@@ -309,10 +443,10 @@
 {% block content %}
 
 {# ── Stat cards ── #}
-{% set total        = predictions|length %}
+{% set total = predictions|length %}
 {% set canvas_count = predictions|selectattr('source','equalto','canvas')|list|length %}
 {% set upload_count = total - canvas_count %}
-{% set avg_conf     = (predictions|map(attribute='confidence')|list|sum / total)|round|int if total > 0 else 0 %}
+{% set avg_conf = (predictions|map(attribute='confidence')|list|sum / total)|round|int if total > 0 else 0 %}
 
 <div class="dash-stats">
   <div class="stat-card">
@@ -351,10 +485,9 @@
       {# Thumbnail #}
       <div class="pred-thumb">
         {% if p.snapshot %}
-          <img src="{{ url_for('static', filename='snapshots/' ~ p.snapshot) }}"
-               alt="digit {{ p.digit }}"/>
+        <img src="{{ url_for('static', filename='snapshots/' ~ p.snapshot) }}" alt="digit {{ p.digit }}" />
         {% else %}
-          <div class="pred-thumb-none">{{ p.digit }}</div>
+        <div class="pred-thumb-none">{{ p.digit }}</div>
         {% endif %}
       </div>
 
@@ -393,30 +526,30 @@
 {# ── Scripts ──────────────────────────────────────────── #}
 {% block extra_js %}
 <script>
-async function deletePred(id) {
-  if (!confirm('Delete this prediction?')) return;
-  try {
-    const res  = await fetch(`/api/predictions/${id}`, { method: 'DELETE' });
-    const data = await res.json();
-    if (data.success) {
-      const card = document.getElementById(`card-${id}`);
-      card.style.transition = 'opacity .25s, transform .25s';
-      card.style.opacity    = '0';
-      card.style.transform  = 'scale(.93)';
-      setTimeout(() => card.remove(), 260);
-      showToast('Prediction deleted');
+  async function deletePred(id) {
+    if (!confirm('Delete this prediction?')) return;
+    try {
+      const res = await fetch(`/api/predictions/${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        const card = document.getElementById(`card-${id}`);
+        card.style.transition = 'opacity .25s, transform .25s';
+        card.style.opacity = '0';
+        card.style.transform = 'scale(.93)';
+        setTimeout(() => card.remove(), 260);
+        showToast('Prediction deleted');
+      }
+    } catch (e) {
+      showToast('Error — try again');
     }
-  } catch (e) {
-    showToast('Error — try again');
   }
-}
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = '';          // reset
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2600);
-}
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = '';          // reset
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2600);
+  }
 </script>
 {% endblock extra_js %}

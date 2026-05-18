@@ -8,7 +8,7 @@ class Config:
     # Format: mysql+pymysql://username:password@host/database
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         "DATABASE_URL",
-        "mysql+pymysql://root:@localhost/synapse_db"
+        "mysql+pymysql://naman:naman1%40DMR@erp.dmrbuilders.in/synapse_db"
         #                    ^^^^ your MySQL password here (blank if none)
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
